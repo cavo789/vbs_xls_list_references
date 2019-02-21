@@ -258,17 +258,43 @@ Sub ForceCScriptExecution()
 
 End Sub
 
+' ------------------------------------------------------
+' Get the current folder
+'
+' Use the wScript.ScriptFullName and not the
+' wshShell.CurrentDirectory propertie to make the folder dependant of
+' where the script is located since the script can be runned with, f.i.,
+' c:\temp > cscript i:\folder\app.vbs.
+' We wish to get "i:\folder"
+' ------------------------------------------------------
+Public Function CurrentFolder
+
+    Dim objFSO, objFile
+
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objFile = objFSO.GetFile(wScript.ScriptFullName)
+
+    CurrentFolder = objFSO.GetParentFolderName(objFile)
+
+    ' Be sure to have the final slash
+    If Not (Right(CurrentFolder, 1) = "\") THen
+        CurrentFolder = CurrentFolder & "\"
+    End If
+
+    Set objFile = Nothing
+    Set objFSO = Nothing
+
+End Function
+
 Dim cMSExcel
 Dim sCurrentFolder, sFiles, sFile, sExt
 Dim arrFiles
-Dim objFSO, objFolder, objFiles, objFile, wshShell
+Dim objFSO, objFolder, objFiles, objFile
 Dim I
 
     Call ForceCScriptExecution
 
-    Set wshShell = CreateObject("WScript.Shell")
-    sCurrentFolder = wshShell.CurrentDirectory
-    Set wshShell = Nothing
+    sCurrentFolder = CurrentFolder()
 
     sFiles = ""
 
@@ -328,7 +354,7 @@ Dim I
 
             For I = 0 To UBound(arrFiles)
 
-                sFile = sCurrentFolder & "\" & arrFiles(I)
+                sFile = sCurrentFolder & arrFiles(I)
 
                 wScript.echo "Get the list of references used in " & sFile
                 wScript.echo ""
