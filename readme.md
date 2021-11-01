@@ -1,6 +1,6 @@
-![Banner](images/banner.jpg)
-
 # Excel - List all references
+
+![Banner](./banner.svg)
 
 > Retrieve the list of references used in an Excel file (.xlam files f.i.) and display them on the console. Loop and process all Excel files in the current folder
 
